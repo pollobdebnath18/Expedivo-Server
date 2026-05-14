@@ -1,6 +1,3 @@
-const dns = require("node:dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
-
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -29,6 +26,7 @@ async function run() {
 
     const db = client.db("expedivo");
     const destinationCollection = db.collection("destination");
+    const bookingCollection = db.collection("bookings");
 
     app.get("/destination", async (req, res) => {
       const result = await destinationCollection.find().toArray();
@@ -65,9 +63,29 @@ async function run() {
 
     app.post("/destination", async (req, res) => {
       const destinationData = req.body;
-      console.log(destinationData);
+      // console.log(destinationData);
       const result = await destinationCollection.insertOne(destinationData);
       res.json(result);
+    });
+
+    app.get("/booking/:userId", async (req, res) => {
+      const { userId } = req.params;
+      const result = await bookingCollection.find({ userId }).toArray();
+      res.json(result);
+    });
+
+    app.post("/booking", async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingCollection.insertOne(bookingData);
+      res.json(result);
+    });
+
+    app.delete("/booking/:bookingId", async (req, res) => {
+      const { bookingId } = req.params;
+      const result = await bookingCollection.deleteOne({
+        _id: new ObjectId(bookingId),
+      });
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
