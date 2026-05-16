@@ -57,7 +57,7 @@ async function run() {
 
     app.get("/destination", async (req, res) => {
       const result = await destinationCollection.find().toArray();
-      res.send(result);
+      res.json(result);
     });
 
     app.get(`/destination/:id`, verifyToken, async (req, res) => {
@@ -77,7 +77,7 @@ async function run() {
         { $set: updatedDestination },
       );
 
-      res.send(result);
+      res.json(result);
     });
 
     app.post("/destination", verifyToken, async (req, res) => {
@@ -92,7 +92,7 @@ async function run() {
       const result = await destinationCollection.deleteOne({
         _id: new ObjectId(id),
       });
-      res.send(result);
+      res.json(result);
     });
 
     app.get("/booking/:userId", verifyToken, async (req, res) => {
